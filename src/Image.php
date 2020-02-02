@@ -217,6 +217,17 @@ class Image
     }
 
     /**
+     * Store image and return base64 image resouce
+     *
+     * @return void
+     */
+    public function storeWithBase64($im = null, $name = null, $path = null)
+    {
+        $path = $this->store($im, $name, $path);
+        return imageToBase64($path);
+    }
+
+    /**
      * 获取当前图像原图的基本信息
      *
      * @return array
