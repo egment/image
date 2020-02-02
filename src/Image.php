@@ -39,11 +39,24 @@ class Image
         }
     }
 
+    /**
+     * 创建true color
+     *
+     * @param [type] $width
+     * @param [type] $height
+     * @return Object
+     */
     public function createTrueColor($width, $height)
     {
         return imageCreateTrueColor($width, $height);
     }
 
+    /**
+     * 创建im资源
+     *
+     * @param [type] $path
+     * @return Object
+     */
     public function create($path = null)
     {
         if ($path) {
@@ -79,6 +92,13 @@ class Image
         return $this->im;
     }
 
+    /**
+     * 创建裸图像
+     *
+     * @param integer $width
+     * @param integer $height
+     * @return Object
+     */
     public function bareCreate($width = 0, $height = 0)
     {
         $width = $width ?: self::DEFAUTL_BARE_WIDTH;
@@ -91,7 +111,7 @@ class Image
      *
      * @param [type] $name
      * @param string $path
-     * @return void
+     * @return String
      */
     public function save($name = null, $path = './')
     {
@@ -107,7 +127,7 @@ class Image
      * @param boolean $store
      * @param [type] $name
      * @param string $path
-     * @return void
+     * @return Object
      */
     public function show($im = null)
     {
@@ -152,7 +172,7 @@ class Image
      * @param [type] $im
      * @param [type] $name
      * @param string $path
-     * @return void
+     * @return String
      */
     public function store($im = null, $name = null, $path = null)
     {
@@ -218,7 +238,7 @@ class Image
      *
      * @param array $startPoint
      * @param array $endPoint
-     * @return void
+     * @return Object
      */
     public function cutRectangle(array $startPoint, int $width, int $height)
     {
@@ -262,6 +282,13 @@ class Image
         return $this;
     }
 
+    /**
+     * 填充
+     *
+     * @param [type] $color
+     * @param integer $alpha
+     * @return void
+     */
     public function fill($color, $alpha = 0)
     {
         // $color = imagecolorallocatealpha($im, 255, 0, 0, 100);
@@ -269,6 +296,11 @@ class Image
         imagefill($this->im, 0, 0, $bg);
     }
 
+    /**
+     * 透明填充
+     *
+     * @return void
+     */
     public function fillTransparent()
     {
         $this->fill([255, 0, 0], 127);
