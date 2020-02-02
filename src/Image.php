@@ -2,6 +2,7 @@
 /*
  * @Description: This class part of egment/Image package.
  * @Author: J.W.
+ * @Version 0.1-rc-202
  * @Date: 2020-02-02 18:57:59
  */
 
