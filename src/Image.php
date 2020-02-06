@@ -3,7 +3,7 @@
  * @Description: This class part of egment/Image package.
  * @Author: Egment
  * @Email: Egment@163.com
- * @Version 0.1.2
+ * @Version 0.1.3
  * @Date: 2020-02-02 18:57:59
  */
 
