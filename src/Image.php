@@ -3,7 +3,7 @@
  * @Description: This class part of egment/Image package.
  * @Author: Egment
  * @Email: Egment@163.com
- * @Version 0.1.1
+ * @Version 0.1.2
  * @Date: 2020-02-02 18:57:59
  */
 
@@ -292,6 +292,36 @@ class Image
         $color = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $alpha);
         imagefilledellipse($this->im, $startPoint[0], $startPoint[1], $width, $height, $color);
         return $this;
+    }
+
+    /**
+     * Draw one arc
+     *
+     * @param array $startPoint
+     * @param [type] $width
+     * @param [type] $height
+     * @param [type] $startAngle
+     * @param [type] $endtAngle
+     * @param [type] $color
+     * @return
+     */
+    public function drawArc(array $startPoint, $width, $height, $startAngle, $endtAngle, $color, $alpha = 0)
+    {
+        $color = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $alpha);
+        return imagearc($this->im, $startPoint[0], $startPoint[1], $width, $height, $startAngle, $endtAngle, $color);
+    }
+
+    /**
+     * Drow a line on the picture
+     *
+     * @param array $startPoint
+     * @param array $endPoint
+     * @return void
+     */
+    public function drawLine(array $startPoint, array $endPoint, array $color, $alpha = 0)
+    {
+        $color = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $alpha);
+        return imageline($this->im, $startPoint[0], $startPoint[1], $endPoint[0], $endPoint[1], $color);
     }
 
     /**
