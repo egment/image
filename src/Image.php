@@ -29,6 +29,9 @@ class Image
     protected $width;
     protected $height;
 
+    //存储后的真实路径
+    protected $realPath;
+
     public function __construct($path = null)
     {
         if (is_string($path)) {
@@ -185,14 +188,14 @@ class Image
                 $fullPath = $path . '/' . $name . '.png';
                 imagepng($this->im, $fullPath);
                 imagedestroy($this->im);
-                $realPath = realpath($fullPath);
-                return $realPath;
+                $this->realPath = realpath($fullPath);
+                return $this->realPath;
             }
             throw new ErrorException("缺少可用的im,不能存储！");
         }
         $ext = pathinfo($this->path, PATHINFO_EXTENSION);
         $name = $name ?: md5(mt_rand() . time());
-        $fullPath = $path . $name . '.' . $ext;
+        $fullPath = $path . '/' . $name . '.' . $ext;
 
         switch ($ext) {
             case 'jpg':
@@ -212,8 +215,8 @@ class Image
                 break;
         }
         imagedestroy($this->im);
-        $realPath = realpath($fullPath);
-        return $realPath;
+        $this->realPath = realpath($fullPath);
+        return $this->realPath;
     }
 
     /**
@@ -224,6 +227,17 @@ class Image
     public function storeWithBase64($im = null, $name = null, $path = null)
     {
         $path = $this->store($im, $name, $path);
+        return imageToBase64($path);
+    }
+
+    /**
+     * Encode image to base64
+     *
+     * @return string
+     */
+    public function toBase64(string $path = '')
+    {
+        $path = $path ?: $this->realPath;
         return imageToBase64($path);
     }
 
@@ -373,6 +387,11 @@ class Image
     public function getPath()
     {
         return $this->path;
+    }
+
+    public function getRealPath()
+    {
+        return $this->realPath;
     }
 
     public function setAlpha(int $value)
