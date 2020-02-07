@@ -69,27 +69,31 @@ class Image
         } else {
             $path = $this->path;
         }
-        $type = \exif_imagetype($path);
-        $allowedTypes = [
-            1, // [] gif
-            2, // [] jpg
-            3, // [] png
-            6, // [] bmp
-        ];
-        if (!in_array($type, $allowedTypes)) {
-            return false;
-        }
+        // $type = \exif_imagetype($path);
+        $type = pathinfo($this->path, PATHINFO_EXTENSION);
+        // $allowedTypes = [
+        //     1, // [] gif
+        //     2, // [] jpg
+        //     3, // [] png
+        //     6, // [] bmp
+        // ];
+        // if (!in_array($type, $allowedTypes)) {
+        //     return false;
+        // }
         switch ($type) {
-            case 1:
+            case 'gif':
                 $this->im = imageCreateFromGif($path);
                 break;
-            case 2:
+            case 'jpg':
+            case 'jpeg':
+            case 'jpe':
                 $this->im = imageCreateFromJpeg($path);
                 break;
-            case 3:
+            case 'png':
                 $this->im = imageCreateFromPng($path);
                 break;
-            case 6:
+            case 'bmp':
+            case 'wbmp':
                 $this->im = imageCreateFromBmp($path);
                 break;
         }
