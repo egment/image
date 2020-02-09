@@ -38,6 +38,16 @@ trait Basic
         return $this;
     }
 
+    public function setDefaultImageType(string $type)
+    {
+        $this->defaultImageType = $type;
+    }
+
+    public function getDefaultImageType()
+    {
+        return $this->defaultImageType;
+    }
+
     public function __clone()
     {
         return new Image($this->path);

@@ -36,6 +36,8 @@ class Image
 
     protected $mime;
 
+    protected $defaultImageType = "image/png";
+
     public function __construct($path = null)
     {
         if (is_string($path)) {
@@ -215,7 +217,7 @@ class Image
      */
     public function toBase64($resource = null, $mime = '')
     {
-        $mime = $mime ?: $this->mime;
+        $mime = $mime ?: $this->mime ?: $this->defaultImageType;
         $resource = $resource ?: $this->realPath ?: trans_resource($this->im, $this->mime);
         if (!$resource) {
             exit("No image resource available.");
