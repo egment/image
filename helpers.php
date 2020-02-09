@@ -6,16 +6,22 @@
  * @param [type] $image_file
  * @return String
  */
-function imageToBase64($imagePath)
+function imageToBase64($resource, $mime = '')
 {
-    if (!file_exists($imagePath)) {
-        throw new \ErrorException("Image File not exists!");
+    if (!$mime) {
+        if (!file_exists($resource)) {
+            throw new \ErrorException("Image File not exists!");
+        }
+        $base64_image = '';
+        $image_info = getimagesize($resource);
+        $image_data = fread(fopen($resource, 'r'), filesize($resource));
+        $base64_image = 'data:' . $image_info['mime'] . ';base64,' . base64_encode($image_data);
+        return $base64_image;
+    } else {
+        // return 'data:' . $mime . ';base64,' . chunk_split(base64_encode($resource));
+        return 'data:' . $mime . ';base64,' . base64_encode($resource);
     }
-    $base64_image = '';
-    $image_info = getimagesize($imagePath);
-    $image_data = fread(fopen($imagePath, 'r'), filesize($imagePath));
-    $base64_image = 'data:' . $image_info['mime'] . ';base64,' . chunk_split(base64_encode($image_data));
-    return $base64_image;
+
 }
 
 /**
@@ -80,4 +86,43 @@ function imagealphamask(&$picture, $mask)
     // Destory old picture and copy back to original picture
     imagedestroy($picture);
     $picture = $newPicture;
+}
+
+function trans_resource($resource, $mime)
+{
+    if (!is_resource($resource)) {
+        return;
+    }
+    ob_start();
+    resourceStream($resource, $mime);
+    $contents = ob_get_contents();
+    ob_end_clean();
+    return $contents;
+}
+
+function resourceStream($resource, $mime)
+{
+    if (($pos = strrpos($mime, '/')) !== false) {
+        $ext = substr($mime, $pos + 1);
+    }
+    $ext = $mime;
+    switch ($ext) {
+        case 'jpg':
+        case 'jpeg':
+        case 'jpe':
+            imagejpeg($resource);
+            break;
+        case 'png':
+            imagepng($resource);
+            break;
+        case 'gif':
+            imagegif($resource);
+            break;
+        case 'bmp':
+        case 'wbmp':
+            imagebmp($resource);
+            break;
+        default:
+            imagejpeg($resource);
+    }
 }

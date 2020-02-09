@@ -9,10 +9,12 @@
 
 namespace Egment;
 
+use Egment\traits\Basic;
 use ErrorException;
 
 class Image
 {
+    use Basic;
 
     const DEFAUTL_BARE_WIDTH = 100;
     const DEFAULT_BARE_HEIGHT = 100;
@@ -32,12 +34,13 @@ class Image
     //存储后的真实路径
     protected $realPath;
 
+    protected $mime;
+
     public function __construct($path = null)
     {
         if (is_string($path)) {
             $this->path = $path;
-            list($this->width, $this->height) = getimagesize($path);
-            $this->create($path);
+            $this->create();
         } else if (is_resource($path)) {
             $this->im = $path;
         }
@@ -65,39 +68,10 @@ class Image
     {
         if ($path) {
             $this->path = $path;
-            list($this->width, $this->height) = getimagesize($path);
-        } else {
-            $path = $this->path;
         }
-        // $type = \exif_imagetype($path);
-        $type = pathinfo($this->path, PATHINFO_EXTENSION);
-        // $allowedTypes = [
-        //     1, // [] gif
-        //     2, // [] jpg
-        //     3, // [] png
-        //     6, // [] bmp
-        // ];
-        // if (!in_array($type, $allowedTypes)) {
-        //     return false;
-        // }
-        switch ($type) {
-            case 'gif':
-                $this->im = imageCreateFromGif($path);
-                break;
-            case 'jpg':
-            case 'jpeg':
-            case 'jpe':
-                $this->im = imageCreateFromJpeg($path);
-                break;
-            case 'png':
-                $this->im = imageCreateFromPng($path);
-                break;
-            case 'bmp':
-            case 'wbmp':
-                $this->im = imageCreateFromBmp($path);
-                break;
-        }
-        return $this->im;
+        list($this->width, $this->height) = getimagesize($this->path);
+        $this->makeIm();
+        return $this;
     }
 
     /**
@@ -236,13 +210,17 @@ class Image
 
     /**
      * Encode image to base64
-     *
+     * @param mixed $resource
      * @return string
      */
-    public function toBase64(string $path = '')
+    public function toBase64($resource = null, $mime = '')
     {
-        $path = $path ?: $this->realPath;
-        return imageToBase64($path);
+        $mime = $mime ?: $this->mime;
+        $resource = $resource ?: $this->realPath ?: trans_resource($this->im, $this->mime);
+        if (!$resource) {
+            exit("No image resource available.");
+        }
+        return imageToBase64($resource, $mime);
     }
 
     /**
@@ -371,42 +349,6 @@ class Image
     {
         $destIm = $this->im;
         return imagecopy($destIm, $srcIm, $destStart[0], $destStart[1], $srcStart[0], $srcStart[1], $width, $height);
-    }
-
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    public function getIm()
-    {
-        return $this->im;
-    }
-
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    public function getRealPath()
-    {
-        return $this->realPath;
-    }
-
-    public function setAlpha(int $value)
-    {
-        $this->alpha = $value;
-        return $this;
-    }
-
-    public function __clone()
-    {
-        return new Image($this->path);
     }
 
     public function __destruct()
