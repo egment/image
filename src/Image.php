@@ -9,7 +9,7 @@
 
 namespace Egment;
 
-use Egment\traits\Basic;
+use Egment\Traits\Basic;
 use ErrorException;
 
 class Image
