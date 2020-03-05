@@ -6,22 +6,21 @@
  * @param [type] $image_file
  * @return String
  */
-function imageToBase64($resource, $mime = '')
+function imageToBase64($resource)
 {
-    if (!$mime) {
-        if (!file_exists($resource)) {
-            throw new \ErrorException("Image File not exists!");
-        }
+    if (is_string($resource) && file_exists($resource)) {
         $base64_image = '';
         $image_info = getimagesize($resource);
         $image_data = fread(fopen($resource, 'r'), filesize($resource));
         $base64_image = 'data:' . $image_info['mime'] . ';base64,' . base64_encode($image_data);
         return $base64_image;
-    } else {
-        // return 'data:' . $mime . ';base64,' . chunk_split(base64_encode($resource));
-        return 'data:' . $mime . ';base64,' . base64_encode($resource);
     }
+    throw new ErrorException('不存在的资源路径或不支持的资源！');
+}
 
+function imToBase64($resource, $mime)
+{
+    return 'data:' . $mime . ';base64,' . base64_encode($resource);
 }
 
 /**

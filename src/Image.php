@@ -215,14 +215,32 @@ class Image
      * @param mixed $resource
      * @return string
      */
-    public function toBase64($resource = null, $mime = '')
+    public function toBase64($resource = null, $mime = '', $type = 'im')
     {
-        $mime = $mime ?: $this->mime ?: $this->defaultImageType;
-        $resource = $resource ?: $this->realPath ?: trans_resource($this->im, $this->mime);
+        if ($type === 'im') {
+            return $this->imToBase64($resource, $mime);
+        } else if ($type === 'img') {
+            return $this->imageToBase64($resource);
+        }
+    }
+
+    public function imageToBase64($resource = null)
+    {
+        $resource = $resource ?: $this->realPath;
         if (!$resource) {
             exit("No image resource available.");
         }
-        return imageToBase64($resource, $mime);
+        return imageToBase64($resource);
+    }
+
+    public function imToBase64($resource = null, $mime = '')
+    {
+        $mime = $mime ?: $this->mime ?: $this->defaultImageType;
+        if ($this->im) {
+            $imResource = $resource ?: trans_resource($this->im, $mime);
+            return imToBase64($imResource, $mime);
+        }
+        throw new ErrorException("im资源不存在！无法转码base64 code");
     }
 
     /**
