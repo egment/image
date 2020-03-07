@@ -9,12 +9,13 @@
 
 namespace Egment;
 
+use Egment\Traits\Adjustment;
 use Egment\Traits\Basic;
 use ErrorException;
 
 class Image
 {
-    use Basic;
+    use Basic, Adjustment;
 
     const DEFAUTL_BARE_WIDTH = 100;
     const DEFAULT_BARE_HEIGHT = 100;
@@ -22,7 +23,6 @@ class Image
     //存储路径
     protected $storeagePath = './';
 
-    protected $im;
     //原图路径
     protected $path;
     protected $alpha;
@@ -305,6 +305,7 @@ class Image
      */
     public function drawEllipse(array $startPoint, $width, $height, $color, $alpha = 0)
     {
+        $alpha = 30;
         $color = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $alpha);
         imagefilledellipse($this->im, $startPoint[0], $startPoint[1], $width, $height, $color);
         return $this;
@@ -321,10 +322,16 @@ class Image
      * @param [type] $color
      * @return
      */
-    public function drawArc(array $startPoint, $width, $height, $startAngle, $endtAngle, $color, $alpha = 0)
+    public function drawArc(array $startPoint, $width, $height, $startAngle, $endtAngle, $color, $thick = 1, $alpha = 0)
     {
         $color = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $alpha);
-        return imagearc($this->im, $startPoint[0], $startPoint[1], $width, $height, $startAngle, $endtAngle, $color);
+        return imagearcthick($this->im, $startPoint[0], $startPoint[1], $width, $height, $startAngle, $endtAngle, $color, $thick);
+    }
+
+    public function drawFilledArc(array $startPoint, $width, $height, $startAngle, $endtAngle, $color, $alpha = 0)
+    {
+        $color = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $alpha);
+        return imagefilledarc($this->im, $startPoint[0], $startPoint[1], $width, $height, $startAngle, $endtAngle, $color, IMG_ARC_PIE);
     }
 
     /**
@@ -332,12 +339,13 @@ class Image
      *
      * @param array $startPoint
      * @param array $endPoint
-     * @return void
+     * @return
      */
-    public function drawLine(array $startPoint, array $endPoint, array $color, $alpha = 0)
+    public function drawLine(array $startPoint, array $endPoint, array $color, int $thick = 1, $alpha = 0)
     {
         $color = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], $alpha);
-        return imageline($this->im, $startPoint[0], $startPoint[1], $endPoint[0], $endPoint[1], $color);
+        // return imageline($this->im, $startPoint[0], $startPoint[1], $endPoint[0], $endPoint[1], $color);
+        return imagelinethick($this->im, $startPoint[0], $startPoint[1], $endPoint[0], $endPoint[1], $color, $thick);
     }
 
     /**
@@ -363,12 +371,6 @@ class Image
     {
         $this->fill([255, 0, 0], 127);
         imagesavealpha($this->im, true);
-    }
-
-    public function copy($srcIm, array $destStart, array $srcStart, $width, $height)
-    {
-        $destIm = $this->im;
-        return imagecopy($destIm, $srcIm, $destStart[0], $destStart[1], $srcStart[0], $srcStart[1], $width, $height);
     }
 
     public function __destruct()
